@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/favorite"
+        android:title="@string/news_favorite" />
+
+    <item
+        android:id="@+id/delete"
+        android:title="@string/news_delete" />
+
+    <item
+        android:id="@+id/shareText"
+        android:title="@string/news_share_text" />
+    
+    <item
+        android:id="@+id/shareImage"
+        android:title="@string/news_share_image" />
+    <item
+        android:id="@+id/share"
+        android:title="分享至微博" />
+</menu>
