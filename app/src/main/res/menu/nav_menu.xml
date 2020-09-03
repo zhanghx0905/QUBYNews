@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/nav_kind_string">
+        <menu>
+            <group android:id="@+id/nav_kind">
+                <item android:id="@+id/navKind0"
+                    android:title="@string/nav_kind0_string"
+                    android:icon="@drawable/baseline_whatshot_black_48dp"/>
+                <item android:id="@+id/navKind1"
+                    android:title="@string/nav_kind2_string"
+                    android:icon="@drawable/baseline_playlist_add_check_black_48dp"/>
+                <item android:id="@+id/navKind2"
+                    android:title="@string/nav_kind3_string"
+                    android:icon="@drawable/baseline_search_black_48dp"/>
+            </group>
+        </menu>
+    </item>
+
+
+    <item android:title="@string/nav_category_string">
+        <menu>
+            <group android:id="@+id/nav_category">
+                <item android:id="@+id/navCategory0"
+                    android:title="@string/nav_category0_string"
+                    android:icon="@drawable/baseline_all_inclusive_black_48dp"/>
+                <item android:id="@+id/navCategory1"
+                    android:title="@string/nav_category1_string"
+                    android:icon="@drawable/baseline_music_video_black_48dp"/>
+                <item android:id="@+id/navCategory2"
+                    android:title="@string/nav_category2_string"
+                    android:icon="@drawable/baseline_gavel_black_48dp"/>
+                <item android:id="@+id/navCategory3"
+                    android:title="@string/nav_category3_string"
+                    android:icon="@drawable/baseline_school_black_48dp"/>
+            </group>
+        </menu>
+    </item>
+</menu>
