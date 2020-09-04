@@ -1,4 +1,4 @@
-package com.example.zhanghx
+package com.java.zhanghx
 
 import org.junit.Test
 
