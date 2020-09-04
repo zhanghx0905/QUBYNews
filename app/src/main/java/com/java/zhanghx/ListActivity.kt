@@ -1,6 +1,7 @@
 package com.java.zhanghx
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_list.*
 
-
 class ListActivity : AppCompatActivity() {
     // removed info type (id, title)
     private var removedType = ArrayList<Pair<Int, CharSequence>>()
@@ -20,16 +20,18 @@ class ListActivity : AppCompatActivity() {
     private var checkedKind = R.id.navKind0
     private var checkedType = R.id.navType0
 
+    private lateinit var newsAdapter: NewsAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(newsToolbar)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
         }
         searchButton.setOnClickListener {
-            Toast.makeText(this, "搜索还没实现！", Toast.LENGTH_SHORT).show()
+            startActivityForResult(Intent(this, SearchActivity::class.java), 42)
         }
         newsList.layoutManager = LinearLayoutManager(this)
         setNavigationView()
@@ -38,7 +40,7 @@ class ListActivity : AppCompatActivity() {
             ActionBarDrawerToggle(
                 this,
                 drawer_layout,
-                toolbar,
+                newsToolbar,
                 R.string.drawer_open,
                 R.string.drawer_close
             )
@@ -88,7 +90,7 @@ class ListActivity : AppCompatActivity() {
         kindMenu.getItem(0).isChecked = true
         typeMenu.getItem(0).let {
             it.isChecked = true
-            toolbar.title = it.title
+            newsToolbar.title = it.title
         }
         var lastClick = 0L
         // 设置侧边栏菜单选项点击事件
@@ -110,14 +112,14 @@ class ListActivity : AppCompatActivity() {
                             removedType.add(Pair(it.itemId, it.title))
                             if (it.isChecked) {
                                 // newsAdapter.setCurCategory(allString)
-                                toolbar.title = allString
+                                newsToolbar.title = allString
                                 it.isChecked = false
                                 checkedType = R.id.navType0
                             }
                         }
                     } else {
                         // newsAdapter.setCurCategory(it.title)
-                        toolbar.title = it.title
+                        newsToolbar.title = it.title
                         typeMenu.findItem(checkedType).isChecked = false
                         checkedType = it.itemId
                     }
@@ -129,15 +131,20 @@ class ListActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        // newsAdapter.notifyDataSetChanged()
+        newsAdapter.notifyDataSetChanged()
         super.onResume()
     }
 
-    private fun doSearch(query: String) {
-        // newsAdapter.doSearch(query)
-        val kindMenu = navView.menu.getItem(0).subMenu
-        kindMenu.findItem(checkedKind).isChecked = false
-        checkedKind = R.id.navKind2
-        kindMenu.findItem(checkedKind).isChecked = true // 搜索结果一栏
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 42 && data != null) {
+            val kindMenu = navView.menu.getItem(0).subMenu
+            kindMenu.findItem(checkedKind).isChecked = false
+            checkedKind = R.id.navKind2
+            kindMenu.findItem(checkedKind).isChecked = true
+            // val response = data.getParcelableExtra<Response>("SelectActivityResult")
+            // newsAdapter.setSearch(response?.data!!.map { NewsExt(it) })
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

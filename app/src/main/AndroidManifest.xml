@@ -20,11 +20,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".NewsActivity"></activity>
+        <activity android:name=".SearchActivity" />
         <activity
-            android:name="com.java.zhanghx.ListActivity"
+            android:name=".ListActivity"
             android:label="@string/title_activity_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name="com.java.zhanghx.SplashActivity">
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
