@@ -24,15 +24,23 @@
                 <item android:id="@+id/navType0"
                     android:title="@string/nav_category0_string"
                     android:icon="@drawable/baseline_all_inclusive_black_48dp"/>
-                <item android:id="@+id/navType1"
-                    android:title="@string/nav_category1_string"
-                    android:icon="@drawable/baseline_music_video_black_48dp"/>
+                <item
+                    android:id="@+id/navType1"
+                    android:icon="@drawable/baseline_gavel_black_48dp"
+                    android:title="@string/nav_category1_string" />
                 <item android:id="@+id/navType2"
                     android:title="@string/nav_category2_string"
-                    android:icon="@drawable/baseline_gavel_black_48dp"/>
-                <item android:id="@+id/navType3"
-                    android:title="@string/nav_category3_string"
                     android:icon="@drawable/baseline_school_black_48dp"/>
+            </group>
+        </menu>
+    </item>
+    <item android:title="其它">
+        <menu>
+            <group android:id="@+id/navOthers">
+    <item
+        android:id="@+id/navData"
+        android:icon="@drawable/baseline_developer_board_black_48dp"
+        android:title="实时数据" />
             </group>
         </menu>
     </item>

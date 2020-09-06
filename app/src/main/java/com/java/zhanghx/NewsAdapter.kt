@@ -1,17 +1,7 @@
 package com.java.zhanghx
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder
@@ -24,6 +14,7 @@ class NewsAdapter(private val activity: ListActivity, newsList: UltimateRecycler
         newsList.setAdapter(this)
 
     }
+
     inner class ViewHolder(itemView: View) :
         UltimateRecyclerviewViewHolder<Any>(itemView),
         View.OnClickListener,

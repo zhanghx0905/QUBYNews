@@ -20,7 +20,7 @@ class ListActivity : AppCompatActivity() {
     private var checkedKind = R.id.navKind0
     private var checkedType = R.id.navType0
 
-    private lateinit var newsAdapter: NewsAdapter
+    //private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,6 +103,7 @@ class ListActivity : AppCompatActivity() {
                     // newsAdapter.setCurKind(it.title)
                     kindMenu.findItem(checkedKind).isChecked = false
                     checkedKind = it.itemId
+                    it.isChecked = true
                 }
                 R.id.navType -> {
                     if (isDoubleClick) {  // 双击删除类别
@@ -117,21 +118,29 @@ class ListActivity : AppCompatActivity() {
                                 checkedType = R.id.navType0
                             }
                         }
-                    } else {
+                    } else { // 选择新闻类别
                         // newsAdapter.setCurCategory(it.title)
                         newsToolbar.title = it.title
                         typeMenu.findItem(checkedType).isChecked = false
                         checkedType = it.itemId
+                        it.isChecked = true
                     }
+
+                }
+                R.id.navOthers -> {
+                    when (it.itemId) {
+                        R.id.navData -> startActivity(Intent(this, InfectedActivity::class.java))
+                    }
+
                 }
             }
-            it.isChecked = true
+
             true
         }
     }
 
     override fun onResume() {
-        newsAdapter.notifyDataSetChanged()
+        //newsAdapter.notifyDataSetChanged()
         super.onResume()
     }
 

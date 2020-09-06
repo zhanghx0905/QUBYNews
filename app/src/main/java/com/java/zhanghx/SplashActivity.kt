@@ -40,5 +40,5 @@ class SplashActivity : AppCompatActivity() {
 }
 
 fun initGlobals() {
-    // TODO
+    initInfectedData()
 }
