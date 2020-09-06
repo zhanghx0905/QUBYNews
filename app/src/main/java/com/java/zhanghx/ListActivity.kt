@@ -130,8 +130,16 @@ class ListActivity : AppCompatActivity() {
                 R.id.navOthers -> {
                     when (it.itemId) {
                         R.id.navData -> startActivity(Intent(this, InfectedActivity::class.java))
-                        R.id.navScholar -> Toast.makeText(this,"还没做！",Toast.LENGTH_SHORT).show()
-                        // TODO("完成知疫学者部分")
+                        else -> {
+                            val intent = Intent(this, ScholarActivity::class.java)
+                            val dead =
+                                when (it.itemId) {
+                                    R.id.navScholar -> false
+                                    else -> true
+                                }
+                            intent.putExtra("dead", dead)
+                            startActivity(intent)
+                        }
                     }
 
                 }
@@ -158,9 +166,8 @@ class ListActivity : AppCompatActivity() {
                 val kgIntent = Intent(this, KGActivity::class.java)
                 kgIntent.putExtra("keywords", keywords)
                 startActivity(kgIntent)
-            }
-            else{
-                Toast.makeText(this,"还没做！",Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "还没做！", Toast.LENGTH_SHORT).show()
                 // TODO("调用newsAdapter完成搜索部分")
             }
             return

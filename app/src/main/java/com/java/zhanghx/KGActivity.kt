@@ -103,7 +103,7 @@ class KGActivity : AppCompatActivity() {
             entity.img_url.httpGet().response { _, _, result ->
                 result.map {
                     val tmp = BitmapFactory.decodeByteArray(it, 0, it.size)
-                    imageView.setImageBitmap(tmp)
+                    imageView.setImageBitmap(scale(tmp))
                     imageView.visibility = View.VISIBLE
                 }
             }

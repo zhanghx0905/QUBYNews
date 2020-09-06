@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.java.zhanghx.KGActivity">
+    tools:context="com.java.zhanghx.ScholarDetailsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,6 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="1dp">
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
@@ -29,33 +30,33 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:fontFamily="sans-serif-black"
-            android:text="定义"
+            android:text="所属"
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/infoTextView"
+            android:id="@+id/afTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10sp"
             android:fontFamily="sans-serif-medium"
             android:textSize="16sp" />
 
+
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
-            android:text="属性"
+            android:text="学术"
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/propertyTextView"
+            android:id="@+id/inTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10sp"
             android:fontFamily="sans-serif-medium"
+            android:layout_marginTop="10sp"
             android:textSize="16sp" />
 
         <TextView
@@ -63,13 +64,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
-            android:text="关系"
+            android:text="小传"
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/relationTextView"
+            android:id="@+id/bioTextView"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10sp"
-            android:layout_height="wrap_content" />
+            android:textSize="16sp"/>
     </LinearLayout>
 </ScrollView>
