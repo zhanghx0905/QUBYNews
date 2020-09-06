@@ -4,15 +4,18 @@
     <item android:title="">
         <menu>
             <group android:id="@+id/navKind">
-                <item android:id="@+id/navKind0"
-                    android:title="@string/nav_kind0_string"
-                    android:icon="@drawable/baseline_whatshot_black_48dp"/>
-                <item android:id="@+id/navKind1"
-                    android:title="@string/nav_kind2_string"
-                    android:icon="@drawable/baseline_playlist_add_check_black_48dp"/>
-                <item android:id="@+id/navKind2"
-                    android:title="@string/nav_kind3_string"
-                    android:icon="@drawable/baseline_search_black_48dp"/>
+                <item
+                    android:id="@+id/navKind0"
+                    android:icon="@drawable/baseline_whatshot_black_48dp"
+                    android:title="@string/nav_kind0_string" />
+                <item
+                    android:id="@+id/navKind1"
+                    android:icon="@drawable/baseline_playlist_add_check_black_48dp"
+                    android:title="@string/nav_kind2_string" />
+                <item
+                    android:id="@+id/navKind2"
+                    android:icon="@drawable/baseline_search_black_48dp"
+                    android:title="@string/nav_kind3_string" />
             </group>
         </menu>
     </item>
@@ -21,26 +24,32 @@
     <item android:title="@string/nav_category_string">
         <menu>
             <group android:id="@+id/navType">
-                <item android:id="@+id/navType0"
-                    android:title="@string/nav_category0_string"
-                    android:icon="@drawable/baseline_all_inclusive_black_48dp"/>
+                <item
+                    android:id="@+id/navType0"
+                    android:icon="@drawable/baseline_all_inclusive_black_48dp"
+                    android:title="@string/nav_category0_string" />
                 <item
                     android:id="@+id/navType1"
                     android:icon="@drawable/baseline_gavel_black_48dp"
                     android:title="@string/nav_category1_string" />
-                <item android:id="@+id/navType2"
-                    android:title="@string/nav_category2_string"
-                    android:icon="@drawable/baseline_school_black_48dp"/>
+                <item
+                    android:id="@+id/navType2"
+                    android:icon="@drawable/baseline_school_black_48dp"
+                    android:title="@string/nav_category2_string" />
             </group>
         </menu>
     </item>
     <item android:title="其它">
         <menu>
             <group android:id="@+id/navOthers">
-    <item
-        android:id="@+id/navData"
-        android:icon="@drawable/baseline_developer_board_black_48dp"
-        android:title="实时数据" />
+                <item
+                    android:id="@+id/navData"
+                    android:icon="@drawable/baseline_developer_board_black_48dp"
+                    android:title="实时数据" />
+                <item
+                    android:id="@+id/navScholar"
+                    android:icon="@drawable/baseline_person_pin_black_48dp"
+                    android:title="知疫学者" />
             </group>
         </menu>
     </item>

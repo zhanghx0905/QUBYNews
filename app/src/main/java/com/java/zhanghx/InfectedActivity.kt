@@ -43,7 +43,7 @@ data class Country(
 )
 
 private val countries = TreeMap<String, Country>()
-private val url = "https://covid-dashboard.aminer.cn/api/dist/epidemic.json"
+private const val url = "https://covid-dashboard.aminer.cn/api/dist/epidemic.json"
 
 
 private fun processData(address: String, data: InfectedData) {
@@ -217,7 +217,6 @@ class InfectedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_infected)
-
         supportActionBar?.let {
             it.title = "实时疫情数据"
         }

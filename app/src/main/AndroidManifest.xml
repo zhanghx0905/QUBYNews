@@ -20,8 +20,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".InfectedActivity"></activity>
-        <activity android:name=".NewsActivity" />
+        <activity android:name=".KGActivity"></activity>
+        <activity android:name=".ScholarActivity" />
+        <activity android:name=".InfectedActivity" />
+        <activity android:name=".DetailsActivity" />
         <activity android:name=".SearchActivity" />
         <activity
             android:name=".ListActivity"

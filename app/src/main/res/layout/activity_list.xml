@@ -19,7 +19,7 @@
             android:id="@+id/newsToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/list_title"/>
+            app:title="@string/list_title" />
 
         <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
             android:id="@+id/newsList"

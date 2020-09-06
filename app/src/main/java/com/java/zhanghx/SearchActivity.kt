@@ -2,17 +2,13 @@ package com.java.zhanghx
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.*
 
-
-data class Query(
-    val size: Int? = null,
-    val words: String? = null
-)
 
 class SearchActivity : Activity() {
 
@@ -37,9 +33,12 @@ class SearchActivity : Activity() {
                     listItems.removeAt(MAX_HISTORY)
             }
             adapter.notifyDataSetChanged()
-            val query = Query(10, queryStr)
+            val intent = Intent()
+            intent.putExtra("keywords", queryStr)
+            intent.putExtra("toKG", checkBox.isChecked)
+            setResult(42, intent)
+            finish()
             return false
-            //TODO: 与NewsAdapter协同完成查询
         }
 
         override fun onQueryTextChange(p0: String?): Boolean {

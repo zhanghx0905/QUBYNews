@@ -130,6 +130,8 @@ class ListActivity : AppCompatActivity() {
                 R.id.navOthers -> {
                     when (it.itemId) {
                         R.id.navData -> startActivity(Intent(this, InfectedActivity::class.java))
+                        R.id.navScholar -> Toast.makeText(this,"还没做！",Toast.LENGTH_SHORT).show()
+                        // TODO("完成知疫学者部分")
                     }
 
                 }
@@ -150,8 +152,17 @@ class ListActivity : AppCompatActivity() {
             kindMenu.findItem(checkedKind).isChecked = false
             checkedKind = R.id.navKind2
             kindMenu.findItem(checkedKind).isChecked = true
-            // val response = data.getParcelableExtra<Response>("SelectActivityResult")
-            // newsAdapter.setSearch(response?.data!!.map { NewsExt(it) })
+            val keywords = data.getStringExtra("keywords")
+            val toKG = data.getBooleanExtra("toKG", false)
+            if (toKG) {
+                val kgIntent = Intent(this, KGActivity::class.java)
+                kgIntent.putExtra("keywords", keywords)
+                startActivity(kgIntent)
+            }
+            else{
+                Toast.makeText(this,"还没做！",Toast.LENGTH_SHORT).show()
+                // TODO("调用newsAdapter完成搜索部分")
+            }
             return
         }
         super.onActivityResult(requestCode, resultCode, data)
