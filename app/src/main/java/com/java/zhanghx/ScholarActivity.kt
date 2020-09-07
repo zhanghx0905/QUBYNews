@@ -75,8 +75,6 @@ fun initScholarsData() {
     }
 }
 
-
-// TODO: 学者界面
 class ScholarActivity : AppCompatActivity() {
     var dead by Delegates.notNull<Boolean>()
 

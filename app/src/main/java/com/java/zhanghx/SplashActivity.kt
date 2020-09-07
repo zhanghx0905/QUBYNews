@@ -51,4 +51,5 @@ class SplashActivity : AppCompatActivity() {
 fun initGlobals() {
     initInfectedData()
     initScholarsData()
+    NewsData.loadFromFile()
 }

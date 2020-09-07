@@ -13,3 +13,4 @@ fun scale(old: Bitmap): Bitmap {
     val scale = resultWidth.toFloat() / old.width
     return Bitmap.createScaledBitmap(old, resultWidth, (old.height * scale).toInt(), true)
 }
+
