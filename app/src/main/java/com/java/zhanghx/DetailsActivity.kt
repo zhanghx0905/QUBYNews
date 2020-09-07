@@ -56,9 +56,6 @@ class DetailsActivity : AppCompatActivity() {
                 mIntent.type = "text/plain"
                 startActivity(Intent.createChooser(mIntent, "分享至微博"))
             }
-            R.id.shareWeixin -> {
-                Toast.makeText(this, "本应用暂未获得微信SDK许可！", Toast.LENGTH_SHORT).show()
-            }
         }
         return super.onOptionsItemSelected(item)
     }

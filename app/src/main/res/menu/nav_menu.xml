@@ -37,6 +37,10 @@
                     android:icon="@drawable/baseline_school_black_48dp"
                     android:title="@string/nav_category2_string" />
                 <item
+                    android:id="@+id/navType3"
+                    android:icon="@drawable/chart_bar"
+                    android:title="事件" />
+                <item
                     android:id="@+id/addType"
                     android:icon="@drawable/baseline_add_white_48dp"
                     android:title="添加种类" />

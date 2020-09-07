@@ -29,14 +29,16 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
             NewsData.refresh({ makeErrorToast(it) }) {
                 newsListView.setRefreshing(false)
                 notifyDataSetChanged()
-                makeSuccessToast()
+                if (NewsData.curKindId == LATEST_IDX)
+                    makeSuccessToast()
+                else Toast.makeText(activity, "切换到最新新闻以加载更多", Toast.LENGTH_SHORT).show()
             }
         }
 
         newsListView.reenableLoadmore()
         newsListView.setOnLoadMoreListener { _, _ ->
             val mSwipeRefreshLayout = newsListView.mSwipeRefreshLayout
-            if (NewsData.curKindId == LATEST_IDX) {
+            if (NewsData.canRefresh) {
                 mSwipeRefreshLayout.post { mSwipeRefreshLayout.isRefreshing = true }
                 NewsData.loadMore({ makeErrorToast(it) }) {
                     //newsListView.setRefreshing(false)
@@ -65,8 +67,8 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
         notifyDataSetChangedSafely()
     }
 
-    fun setSearch(newsList: List<News>) {
-        NewsData.setSearch(newsList)
+    fun setEvents(newsList: List<News>) {
+        NewsData.setEvents(newsList)
         notifyDataSetChangedSafely()
     }
 
@@ -80,6 +82,7 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
             "全部" -> "all"
             "新闻" -> "news"
             "论文" -> "paper"
+            "事件" -> "event"
             else -> name
         }
         NewsData.curTypeId = ALL_TYPE.indexOf(tmp)

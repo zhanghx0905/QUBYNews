@@ -30,7 +30,8 @@ const val SEARCH_IDX = 2
 val ALL_KIND = arrayOf("最新", "已读", "搜索结果")
 
 const val ALL_IDX = 0
-val ALL_TYPE = arrayOf("all", "news", "paper")
+const val EVENT_IDX = 3
+val ALL_TYPE = arrayOf("all", "news", "paper", "event")
 
 const val GET_COUNT = 20
 val URL = "https://covid-dashboard.aminer.cn/api/events/list?size=$GET_COUNT&"
@@ -48,12 +49,15 @@ object NewsData {
     val curNews
         inline get() = allNews[curKindId][curTypeId]
     var curPage = 1
+    val canRefresh
+        inline get() = (curKindId == LATEST_IDX && curTypeId != EVENT_IDX)
+
 
     inline fun refresh(
         crossinline errorHandler: (error: FuelError) -> Unit,
         crossinline finishHandler: () -> Unit
     ) { // 下拉
-        if (NewsData.curKindId == LATEST_IDX) {
+        if (canRefresh) {
             val url = URL + "page=1&type=${ALL_TYPE[curTypeId]}"
             url.httpGet().responseString() { // 特别注意本函数是异步执行的
                     request, response, result ->
@@ -131,7 +135,6 @@ object NewsData {
         if (prevKindId == -1) {
             prevKindId = curKindId
         }
-        println(newsList)
         curKindId = SEARCH_IDX
         val searchNews = allNews[SEARCH_IDX]
         searchNews.forEach(ArrayList<News>::clear)
@@ -146,10 +149,21 @@ object NewsData {
         news.read = true
         if (!readSet.contains(news.id)) {
             val typeId = ALL_TYPE.indexOf(news.type)
-            allNews[READ_IDX][typeId].add(news)
-            allNews[READ_IDX][ALL_IDX].add(news)
+            allNews[READ_IDX][typeId].add(0, news)
+            allNews[READ_IDX][ALL_IDX].add(0, news)
             readSet.add(news.id)
             storeToFile()
+        }
+    }
+
+    fun setEvents(newsList: List<News>) {
+
+        curKindId = LATEST_IDX
+        curTypeId = EVENT_IDX
+        allNews[curKindId][curTypeId].clear()
+        newsList.forEach {
+            allNews[curKindId][curTypeId].add(it)
+            allNews[curKindId][ALL_IDX].add(it)
         }
     }
 
@@ -157,7 +171,7 @@ object NewsData {
         doAsync {
             val parcel = Parcel.obtain()
             parcel.writeTypedList(allNews[READ_IDX][ALL_IDX])
-            val fo = GLOBAL_CONTEXT.openFileOutput("$NEWS_FILENAME", Context.MODE_PRIVATE)
+            val fo = GLOBAL_CONTEXT.openFileOutput(NEWS_FILENAME, Context.MODE_PRIVATE)
             fo.write(parcel.marshall())
             parcel.recycle()
         }
@@ -165,7 +179,7 @@ object NewsData {
 
     fun loadFromFile() {
         try {
-            val fi = GLOBAL_CONTEXT.openFileInput("$NEWS_FILENAME")
+            val fi = GLOBAL_CONTEXT.openFileInput(NEWS_FILENAME)
             val bytes = fi.readBytes()
             val parcel = Parcel.obtain()
             parcel.unmarshall(bytes, 0, bytes.size)

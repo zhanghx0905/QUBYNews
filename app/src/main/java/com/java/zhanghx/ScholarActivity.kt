@@ -113,7 +113,7 @@ class ScholarActivity : AppCompatActivity() {
         val to = intArrayOf(R.id.nameTextView, R.id.infoTextView)
         val adapter = SimpleAdapter(this, listData, R.layout.scholar_item, form, to)
 
-        listView.adapter = adapter
-        listView.onItemClickListener = ListItemClickListener()
+        scholarListView.adapter = adapter
+        scholarListView.onItemClickListener = ListItemClickListener()
     }
 }

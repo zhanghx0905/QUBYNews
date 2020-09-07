@@ -4,10 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.java.zhanghx.ScholarActivity">
-
+    tools:context="com.java.zhanghx.EventActivity">
     <ListView
-        android:id="@+id/scholarListView"
+        android:id="@+id/eventListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:choiceMode="singleChoice"

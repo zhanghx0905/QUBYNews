@@ -151,9 +151,8 @@ class ListActivity : AppCompatActivity() {
                 R.id.navOthers -> {
                     when (it.itemId) {
                         R.id.navData -> startActivity(Intent(this, InfectedActivity::class.java))
-                        R.id.navEvents -> {
-                            // TODO
-                        }
+                        R.id.navEvents ->
+                            startActivityForResult(Intent(this, EventActivity::class.java), 21)
                         else -> {
                             val intent = Intent(this, ScholarActivity::class.java)
                             val dead = (it.itemId != R.id.navScholar)
@@ -184,6 +183,18 @@ class ListActivity : AppCompatActivity() {
                 newsAdapter.doSearch(keywords as String)
                 updateTitle()
             }
+            return
+        }
+        else if (requestCode == 21 && data != null) {
+            val eventsList = data.getParcelableArrayListExtra<News>("events")
+            eventsList?.let { newsAdapter.setEvents(it) }
+            kindMenu.findItem(checkedKind).isChecked = false
+            checkedKind = R.id.navKind0
+            kindMenu.findItem(checkedKind).isChecked = true
+            typeMenu.findItem(checkedType).isChecked = false
+            checkedType = R.id.navType3
+            typeMenu.findItem(checkedType).isChecked = true
+            updateTitle()
             return
         }
         super.onActivityResult(requestCode, resultCode, data)
