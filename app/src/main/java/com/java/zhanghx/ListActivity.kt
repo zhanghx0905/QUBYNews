@@ -3,6 +3,7 @@ package com.java.zhanghx
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
@@ -11,29 +12,36 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_list.*
 
+
 class ListActivity : AppCompatActivity() {
-    // removed info type (id, title)
     private var removedType = ArrayList<Pair<Int, CharSequence>>()
+    private var existType = ArrayList<Pair<Int, CharSequence>>()
 
     private var checkedKind = R.id.navKind0
     private var checkedType = R.id.navType0
+
+    lateinit var kindMenu: Menu
+    lateinit var typeMenu: Menu
 
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
+
         setSupportActionBar(newsToolbar)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
         }
+        setNavigationView()
         searchButton.setOnClickListener {
             startActivityForResult(Intent(this, SearchActivity::class.java), 42)
         }
         newsList.layoutManager = LinearLayoutManager(this)
-        setNavigationView()
+
         newsAdapter = NewsAdapter(this, newsList)
+
 
         val drawerToggle =
             ActionBarDrawerToggle(
@@ -44,6 +52,7 @@ class ListActivity : AppCompatActivity() {
                 R.string.drawer_close
             )
         drawerToggle.syncState()
+        updateTitle()
     }
 
     override fun onResume() {
@@ -51,23 +60,73 @@ class ListActivity : AppCompatActivity() {
         super.onResume()
     }
 
+    private fun addType() {
+        if (removedType.isEmpty())
+            Toast.makeText(this, "没有可添加类别！", Toast.LENGTH_SHORT).show()
+        else {
+            val builder = AlertDialog.Builder(this)
+            val spinner = Spinner(this)
+            spinner.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                removedType.map { (_, title) -> title })
+            builder.setView(spinner) // 确定: 添加类别
+                .setPositiveButton("确定") { _, _ ->
+                    val title = spinner.selectedItem.toString()
+                    val idx = removedType.indexOfFirst { it.second == title }
+                    navView.menu.findItem(removedType[idx].first).isVisible = true
+                    existType.add(removedType[idx])
+                    removedType.removeAt(idx)
+                } // 取消: 什么也不做
+                .setNegativeButton("取消") { _, _ -> }
+            val dialog = builder.create()
+            dialog.window?.setWindowAnimations(R.style.dialog_style)
+            dialog.show()
+        }
+    }
+
+    private fun removeType() {
+        if (existType.isEmpty())
+            Toast.makeText(this, "没有可删除类别！", Toast.LENGTH_SHORT).show()
+        else {
+            val builder = AlertDialog.Builder(this)
+            val spinner = Spinner(this)
+            spinner.adapter = ArrayAdapter(
+                this,
+                android.R.layout.simple_list_item_1,
+                existType.map { (_, title) -> title })
+            builder.setView(spinner) // 确定: 添加类别
+                .setPositiveButton("确定") { _, _ ->
+                    val title = spinner.selectedItem.toString()
+                    val idx = existType.indexOfFirst { it.second == title }
+                    navView.menu.findItem(existType[idx].first).isVisible = false
+                    removedType.add(existType[idx])
+                    existType.removeAt(idx)
+                } // 取消: 什么也不做
+                .setNegativeButton("取消") { _, _ -> }
+            val dialog = builder.create()
+            dialog.window?.setWindowAnimations(R.style.dialog_style)
+            dialog.show()
+        }
+    }
+
+    private fun updateTitle() {
+        newsToolbar.title =
+            "${kindMenu.findItem(checkedKind).title}：${typeMenu.findItem(checkedType).title}"
+    }
+
     // 设置侧边栏
     private fun setNavigationView() {
         val menu = navView.menu
-        val kindMenu = menu.getItem(0).subMenu
-        val typeMenu = menu.getItem(1).subMenu
-
+        kindMenu = menu.getItem(0).subMenu
+        typeMenu = menu.getItem(1).subMenu
         kindMenu.getItem(0).isChecked = true
-        typeMenu.getItem(0).let {
-            it.isChecked = true
-            newsToolbar.title = it.title
-        }
-        var lastClick = 0L
+        typeMenu.getItem(0).isChecked = true
+        existType.add(Pair(R.id.navType1, typeMenu.getItem(1).title))
+        existType.add(Pair(R.id.navType2, typeMenu.getItem(2).title))
+
         // 设置侧边栏菜单选项点击事件
         navView.setNavigationItemSelectedListener {
-            val cur = System.currentTimeMillis()
-            val isDoubleClick = (cur - lastClick) < 500L
-            lastClick = cur
             when (it.groupId) {
                 R.id.navKind -> {
                     newsAdapter.setCurKind(it.title)
@@ -76,38 +135,10 @@ class ListActivity : AppCompatActivity() {
                     it.isChecked = true
                 }
                 R.id.navType -> {
-                    if (it.itemId == R.id.addType) {
-                        if (removedType.isEmpty())
-                            Toast.makeText(this, "没有可添加类别！", Toast.LENGTH_SHORT).show()
-                        else {
-                            val builder = AlertDialog.Builder(this)
-                            val spinner = Spinner(this)
-                            spinner.adapter = ArrayAdapter(
-                                this,
-                                android.R.layout.simple_list_item_1,
-                                removedType.map { (_, title) -> title })
-                            builder.setView(spinner) // 确定: 添加类别
-                                .setPositiveButton("确定") { _, _ ->
-                                    val title = spinner.selectedItem.toString()
-                                    val idx = removedType.indexOfFirst { it.second == title }
-                                    navView.menu.findItem(removedType[idx].first).isVisible = true
-                                    removedType.removeAt(idx)
-                                } // 取消: 什么也不做
-                                .setNegativeButton("取消") { _, _ -> }
-                            builder.create().show()
-                        }
-                    } else if (isDoubleClick) {  // 双击删除类别
-                        val allString = "全部"
-                        if (it.title != allString) {
-                            it.isVisible = false
-                            removedType.add(Pair(it.itemId, it.title))
-                            if (it.isChecked) {
-                                newsAdapter.setCurType(allString)
-                                newsToolbar.title = allString
-                                it.isChecked = false
-                                checkedType = R.id.navType0
-                            }
-                        }
+                    if (it.itemId == R.id.addType) {  // 增加类别
+                        addType()
+                    } else if (it.itemId == R.id.removeType) {  // 删除类别
+                        removeType()
                     } else { // 单击选择新闻类别
                         newsAdapter.setCurType(it.title)
                         newsToolbar.title = it.title
@@ -120,21 +151,19 @@ class ListActivity : AppCompatActivity() {
                 R.id.navOthers -> {
                     when (it.itemId) {
                         R.id.navData -> startActivity(Intent(this, InfectedActivity::class.java))
+                        R.id.navEvents -> {
+                            // TODO
+                        }
                         else -> {
                             val intent = Intent(this, ScholarActivity::class.java)
-                            val dead =
-                                when (it.itemId) {
-                                    R.id.navScholar -> false
-                                    else -> true
-                                }
+                            val dead = (it.itemId != R.id.navScholar)
                             intent.putExtra("dead", dead)
                             startActivity(intent)
                         }
                     }
-
                 }
             }
-
+            updateTitle()
             true
         }
     }
@@ -149,11 +178,11 @@ class ListActivity : AppCompatActivity() {
                 kgIntent.putExtra("keywords", keywords)
                 startActivity(kgIntent)
             } else {
-                val kindMenu = navView.menu.getItem(0).subMenu
                 kindMenu.findItem(checkedKind).isChecked = false
                 checkedKind = R.id.navKind2
                 kindMenu.findItem(checkedKind).isChecked = true
                 newsAdapter.doSearch(keywords as String)
+                updateTitle()
             }
             return
         }

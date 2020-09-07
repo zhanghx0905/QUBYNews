@@ -6,7 +6,8 @@
     android:id="@+id/drawer_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".ListActivity">
 
     <!--主界面-->
     <LinearLayout

@@ -1,14 +1,11 @@
 package com.java.zhanghx
 
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_details.*
 
 class DetailsActivity : AppCompatActivity() {
@@ -58,6 +55,9 @@ class DetailsActivity : AppCompatActivity() {
                 )
                 mIntent.type = "text/plain"
                 startActivity(Intent.createChooser(mIntent, "分享至微博"))
+            }
+            R.id.shareWeixin -> {
+                Toast.makeText(this, "本应用暂未获得微信SDK许可！", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)

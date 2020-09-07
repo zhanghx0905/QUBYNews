@@ -26,24 +26,30 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
         newsListView.setAdapter(this)
 
         newsListView.setDefaultOnRefreshListener {
-            if (NewsData.curKindId == LATEST_IDX) {
-                println("reflush")
-                newsListView.post { newsListView.setRefreshing(true) }
-                NewsData.refresh { makeErrorToast(it) }
-                notifyDataSetChangedSafely()
+            NewsData.refresh({ makeErrorToast(it) }) {
+                newsListView.setRefreshing(false)
+                notifyDataSetChanged()
+                makeSuccessToast()
             }
-            newsListView.post { newsListView.setRefreshing(false) }
         }
+
         newsListView.reenableLoadmore()
         newsListView.setOnLoadMoreListener { _, _ ->
+            val mSwipeRefreshLayout = newsListView.mSwipeRefreshLayout
             if (NewsData.curKindId == LATEST_IDX) {
-                println("loadmore")
-                newsListView.post { newsListView.setRefreshing(true) }
-                NewsData.loadMore { makeErrorToast(it) }
-                notifyDataSetChangedSafely()
+                mSwipeRefreshLayout.post { mSwipeRefreshLayout.isRefreshing = true }
+                NewsData.loadMore({ makeErrorToast(it) }) {
+                    //newsListView.setRefreshing(false)
+                    notifyDataSetChanged()
+                    makeSuccessToast()
+                }
             }
-            newsListView.post { newsListView.setRefreshing(false) }
         }
+        NewsData.refresh({ makeErrorToast(it) }) { notifyDataSetChanged() }
+    }
+
+    private fun makeSuccessToast() {
+        Toast.makeText(activity, "加载成功！", Toast.LENGTH_SHORT).show()
     }
 
     private fun makeErrorToast(error: FuelError) {

@@ -40,6 +40,10 @@
                     android:id="@+id/addType"
                     android:icon="@drawable/baseline_add_white_48dp"
                     android:title="添加种类" />
+                <item
+                    android:id="@+id/removeType"
+                    android:icon="@drawable/minus"
+                    android:title="移除种类" />
             </group>
         </menu>
     </item>
@@ -51,13 +55,17 @@
                     android:icon="@drawable/baseline_developer_board_black_48dp"
                     android:title="实时数据" />
                 <item
+                    android:id="@+id/navEvents"
+                    android:icon="@drawable/baseline_star_black_48dp"
+                    android:title="热点事件" />
+                <item
                     android:id="@+id/navScholar"
                     android:icon="@drawable/baseline_person_pin_black_48dp"
                     android:title="知疫学者" />
 
                 <item
                     android:id="@+id/navDeadScholar"
-                    android:icon="@drawable/baseline_person_pin_black_48dp"
+                    android:icon="@drawable/user"
                     android:title="追忆学者" />
             </group>
         </menu>

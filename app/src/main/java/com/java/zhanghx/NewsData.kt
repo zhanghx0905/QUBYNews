@@ -49,17 +49,27 @@ object NewsData {
         inline get() = allNews[curKindId][curTypeId]
     var curPage = 1
 
-    inline fun refresh(crossinline errorHandler: (error: FuelError) -> Unit) { // 下拉
-        val url = URL + "page=1&type=${ALL_TYPE[curTypeId]}"
-        url.httpGet().responseString() { request, response, result ->
-            when (result) {
-                is Result.Failure -> errorHandler(result.error)
-                is Result.Success -> addNews(result.get())
+    inline fun refresh(
+        crossinline errorHandler: (error: FuelError) -> Unit,
+        crossinline finishHandler: () -> Unit
+    ) { // 下拉
+        if (NewsData.curKindId == LATEST_IDX) {
+            val url = URL + "page=1&type=${ALL_TYPE[curTypeId]}"
+            url.httpGet().responseString() { // 特别注意本函数是异步执行的
+                    request, response, result ->
+                when (result) {
+                    is Result.Failure -> errorHandler(result.error)
+                    is Result.Success -> addNews(result.get())
+                }
+                finishHandler()
             }
-        }
+        } else finishHandler()
     }
 
-    inline fun loadMore(crossinline errorHandler: (error: FuelError) -> Unit) {
+    inline fun loadMore(
+        crossinline errorHandler: (error: FuelError) -> Unit,
+        crossinline finishHandler: () -> Unit
+    ) {
         curPage += 1
         val url = URL + "page=$curPage&type=${ALL_TYPE[curTypeId]}"
         url.httpGet().responseString() { request, response, result ->
@@ -67,6 +77,7 @@ object NewsData {
                 is Result.Failure -> errorHandler(result.error)
                 is Result.Success -> addNews(result.get(), true)
             }
+            finishHandler()
         }
     }
 
