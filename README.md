@@ -27,3 +27,7 @@ Java Assignment, 2020 Summer.
 [zhanghx0905](https://github.com/zhanghx0905)
 
 xuxnxx
+
+## Acknowledge
+
+本项目部分基于https://github.com/MashPlant/News
