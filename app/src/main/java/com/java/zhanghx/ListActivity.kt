@@ -57,6 +57,7 @@ class ListActivity : AppCompatActivity() {
 
     override fun onResume() {
         newsAdapter.notifyDataSetChangedSafely()
+        updateTitle()
         super.onResume()
     }
 

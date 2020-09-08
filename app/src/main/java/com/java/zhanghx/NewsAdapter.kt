@@ -29,9 +29,9 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
             NewsData.refresh({ makeErrorToast(it) }) {
                 newsListView.setRefreshing(false)
                 notifyDataSetChanged()
-                if (NewsData.curKindId == LATEST_IDX)
+                if (NewsData.canRefresh)
                     makeSuccessToast()
-                else Toast.makeText(activity, "切换到最新新闻以加载更多", Toast.LENGTH_SHORT).show()
+                else Toast.makeText(activity, "本类别下不支持加载更多", Toast.LENGTH_SHORT).show()
             }
         }
 

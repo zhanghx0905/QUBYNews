@@ -33,24 +33,24 @@ const val ALL_IDX = 0
 const val EVENT_IDX = 3
 val ALL_TYPE = arrayOf("all", "news", "paper", "event")
 
-const val GET_COUNT = 20
-val URL = "https://covid-dashboard.aminer.cn/api/events/list?size=$GET_COUNT&"
+const val GET_COUNT = 40
+const val URL = "https://covid-dashboard.aminer.cn/api/events/list?"
 
-val NEWS_FILENAME = "QUBYNews"
+const val NEWS_FILENAME = "QUBYNews"
 
 object NewsData {
     val allNews = Array(ALL_KIND.size) { Array(ALL_TYPE.size) { ArrayList<News>() } }
     val newsSet = HashSet<String>()
-    val readSet = HashSet<String>()
+    private val readSet = HashSet<String>()
+    private var keywords: MutableList<String>? = null   // for search load more/refresh
 
     var curKindId = LATEST_IDX
-    var prevKindId = -1      // -1表示无效，即不存在prevKind
     var curTypeId = ALL_IDX
     val curNews
         inline get() = allNews[curKindId][curTypeId]
     var curPage = 1
     val canRefresh
-        inline get() = (curKindId == LATEST_IDX && curTypeId != EVENT_IDX)
+        inline get() = (curKindId != READ_IDX && curTypeId != EVENT_IDX)
 
 
     inline fun refresh(
@@ -58,9 +58,9 @@ object NewsData {
         crossinline finishHandler: () -> Unit
     ) { // 下拉
         if (canRefresh) {
-            val url = URL + "page=1&type=${ALL_TYPE[curTypeId]}"
-            url.httpGet().responseString() { // 特别注意本函数是异步执行的
-                    request, response, result ->
+            val url = URL + "size=$GET_COUNT&page=1&type=${ALL_TYPE[curTypeId]}"
+            url.httpGet().responseString() { // 异步执行
+                    _, _, result ->
                 when (result) {
                     is Result.Failure -> errorHandler(result.error)
                     is Result.Success -> addNews(result.get())
@@ -75,8 +75,8 @@ object NewsData {
         crossinline finishHandler: () -> Unit
     ) {
         curPage += 1
-        val url = URL + "page=$curPage&type=${ALL_TYPE[curTypeId]}"
-        url.httpGet().responseString() { request, response, result ->
+        val url = URL + "size=$GET_COUNT&page=$curPage&type=${ALL_TYPE[curTypeId]}"
+        url.httpGet().responseString() { _, _, result ->
             when (result) {
                 is Result.Failure -> errorHandler(result.error)
                 is Result.Success -> addNews(result.get(), true)
@@ -85,9 +85,10 @@ object NewsData {
         }
     }
 
-    inline fun addNews(rawData: String, loadmore: Boolean = false) {
+    inline fun parseNews(rawData: String): ArrayList<News> {
         val json = JSONObject(rawData)
         val data = json.getJSONArray("data")
+        val newsList = ArrayList<News>()
         for (i in 0 until data.length()) {
             val newsData = data.getJSONObject(i)
 
@@ -99,14 +100,26 @@ object NewsData {
                 type = newsData.getString("type"),
                 source = newsData.getString("source")
             )
+            newsList.add(news)
+        }
+        return newsList
+    }
+
+    inline fun addNews(rawData: String, loadmore: Boolean = false) {
+        val newsList = parseNews(rawData)
+        for (news in newsList) {
+            if (curKindId == SEARCH_IDX) {
+                if (!searchFilter(news))
+                    continue
+            }
             val typeId = ALL_TYPE.indexOf(news.type)
-            if (!newsSet.contains(news.id) && typeId != -1) {
+            if (typeId != -1 && !newsSet.contains(news.id)) {
                 if (!loadmore) {
-                    allNews[LATEST_IDX][typeId].add(0, news)
-                    allNews[LATEST_IDX][ALL_IDX].add(0, news)
+                    allNews[curKindId][typeId].add(0, news)
+                    allNews[curKindId][ALL_IDX].add(0, news)
                 } else {
-                    allNews[LATEST_IDX][typeId].add(news)
-                    allNews[LATEST_IDX][ALL_IDX].add(news)
+                    allNews[curKindId][typeId].add(news)
+                    allNews[curKindId][ALL_IDX].add(news)
                 }
                 newsSet.add(news.id)
 
@@ -114,36 +127,32 @@ object NewsData {
         }
     }
 
-    fun doSearch(keywords: String) {
-        if (prevKindId == -1) {
-            prevKindId = curKindId
+    fun searchFilter(news: News): Boolean {
+        val title = news.title.toLowerCase()
+        keywords?.forEach {
+            if (title.contains(it.toLowerCase()))
+                return true
         }
-        val keywordSet = keywords.split(' ').toHashSet()
-        val result = ArrayList<News>()
-        for (news in curNews) {
-            val title = news.title.toLowerCase()
-            for (kw in keywordSet) {
-                if (title.contains(kw.toLowerCase())) {
-                    result.add(news)
-                }
-            }
-        }
-        setSearch(result)
+        return false
     }
 
-    fun setSearch(newsList: List<News>) {
-        if (prevKindId == -1) {
-            prevKindId = curKindId
+    fun doSearch(keyword: String) {
+        keywords = keyword.split(' ').toMutableList()
+        val result = ArrayList<News>()
+        for (news in curNews) {
+            if (searchFilter(news))
+                result.add(news)
         }
         curKindId = SEARCH_IDX
         val searchNews = allNews[SEARCH_IDX]
         searchNews.forEach(ArrayList<News>::clear)
-        newsList.forEach {
+        result.forEach {
             val typeId = ALL_TYPE.indexOf(it.type)
             allNews[SEARCH_IDX][typeId].add(it)
             allNews[SEARCH_IDX][ALL_IDX].add(it)
         }
     }
+
 
     fun addReadNews(news: News) {
         news.read = true
@@ -157,7 +166,6 @@ object NewsData {
     }
 
     fun setEvents(newsList: List<News>) {
-
         curKindId = LATEST_IDX
         curTypeId = EVENT_IDX
         allNews[curKindId][curTypeId].clear()
@@ -192,7 +200,7 @@ object NewsData {
                     readSet.add(x.id)
                 }
             }
-        } catch (e: IOException) { // 正常，应该是文件还不存在
+        } catch (e: IOException) { // 初次使用，文件还不存在
             Log.e("initGlobals", e.toString())
         }
     }
