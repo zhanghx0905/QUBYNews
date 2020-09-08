@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.Result
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_scholar.*
 import org.json.JSONObject
@@ -40,37 +41,39 @@ private val BASE_URL =
 private val pattern = Regex("(<br>)+")
 
 fun initScholarsData() {
-    BASE_URL.httpGet().responseString() { request, response, result ->
-        val rawStr = result.get()
-        val json = JSONObject(rawStr)
-        val dataArray = json.getJSONArray("data")
-        for (i in 0 until dataArray.length()) {
-            val data = dataArray.getJSONObject(i)
-            val indicesData = data.getJSONObject("indices")
-            val indices = ScholarIndices(
-                indicesData.getInt("hindex"),
-                indicesData.getDouble("activity"),
-                indicesData.getDouble("newStar"),
-                indicesData.getInt("citations"),
-                indicesData.getInt("pubs")
-            )
-            val profile = data.getJSONObject("profile")
-            val tmp = data.getString("name_zh")
-            val name =
-                if (tmp != "") tmp
-                else data.getString("name")
-            val bio = profile.getString("bio")
-            val scholar = Scholar(
-                name,
-                data.getString("avatar"),
-                profile.getString("affiliation"),
-                pattern.replace(bio, "\n"),
-                data.getBoolean("is_passedaway"),
-                indices
-            )
-            if (scholar.passedAway)
-                deadScholars.add(scholar)
-            else scholars.add(scholar)
+    BASE_URL.httpGet().responseString() { _, _, result ->
+        if (result is Result.Success) {
+            val rawStr = result.get()
+            val json = JSONObject(rawStr)
+            val dataArray = json.getJSONArray("data")
+            for (i in 0 until dataArray.length()) {
+                val data = dataArray.getJSONObject(i)
+                val indicesData = data.getJSONObject("indices")
+                val indices = ScholarIndices(
+                    indicesData.getInt("hindex"),
+                    indicesData.getDouble("activity"),
+                    indicesData.getDouble("newStar"),
+                    indicesData.getInt("citations"),
+                    indicesData.getInt("pubs")
+                )
+                val profile = data.getJSONObject("profile")
+                val tmp = data.getString("name_zh")
+                val name =
+                    if (tmp != "") tmp
+                    else data.getString("name")
+                val bio = profile.getString("bio")
+                val scholar = Scholar(
+                    name,
+                    data.getString("avatar"),
+                    profile.getString("affiliation"),
+                    pattern.replace(bio, "\n"),
+                    data.getBoolean("is_passedaway"),
+                    indices
+                )
+                if (scholar.passedAway)
+                    deadScholars.add(scholar)
+                else scholars.add(scholar)
+            }
         }
     }
 }
@@ -96,6 +99,8 @@ class ScholarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scholar)
+
+        if (scholars.isEmpty()) initScholarsData()
 
         dead = intent.getBooleanExtra("dead", false)
         supportActionBar?.title = if (dead) "追忆学者" else "知疫学者"

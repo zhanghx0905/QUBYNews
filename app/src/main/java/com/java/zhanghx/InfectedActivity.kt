@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.result.Result
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
@@ -68,22 +69,23 @@ private fun processData(address: String, data: InfectedData) {
 }
 
 fun initInfectedData() {
+    url.httpGet().responseString() { _, _, result ->
+        if (result is Result.Success) {
+            val rawStr = result.get()
+            val jsonObject = JSONObject(rawStr)
+            for (address in jsonObject.keys()) {
+                val dataObject = jsonObject.getJSONObject(address)
+                val infectedDataArray = dataObject.getJSONArray("data")
+                val infectedData = InfectedData(begDate = dataObject.getString("begin"))
 
-    url.httpGet().responseString() { request, response, result ->
-        val rawStr = result.get()
-        val jsonObject = JSONObject(rawStr)
-        for (address in jsonObject.keys()) {
-            val dataObject = jsonObject.getJSONObject(address)
-            val infectedDataArray = dataObject.getJSONArray("data")
-            val infectedData = InfectedData(begDate = dataObject.getString("begin"))
-
-            for (i in 0 until infectedDataArray.length()) {
-                val tmp = infectedDataArray.getJSONArray(i)
-                infectedData.confirmed.add(tmp.getInt(0))
-                infectedData.cured.add(tmp.getInt(2))
-                infectedData.dead.add(tmp.getInt(3))
+                for (i in 0 until infectedDataArray.length()) {
+                    val tmp = infectedDataArray.getJSONArray(i)
+                    infectedData.confirmed.add(tmp.getInt(0))
+                    infectedData.cured.add(tmp.getInt(2))
+                    infectedData.dead.add(tmp.getInt(3))
+                }
+                processData(address, infectedData)
             }
-            processData(address, infectedData)
         }
     }
 }
@@ -217,6 +219,11 @@ class InfectedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_infected)
+
+        if (countries.isEmpty()) {
+            initInfectedData()
+        }
+
         supportActionBar?.let {
             it.title = "实时疫情数据"
         }
@@ -229,6 +236,7 @@ class InfectedActivity : AppCompatActivity() {
         spinnerCountry.onItemSelectedListener = CountrySelectListener()
         spinnerState.onItemSelectedListener = ProvinceSelectListener()
         infoButton.setOnClickListener {
+            if (spinnerCountry.selectedItem == null) return@setOnClickListener
             val country = spinnerCountry.selectedItem.toString()
             val province = spinnerState.selectedItem?.toString()
             val city = spinnerCity.selectedItem?.toString()

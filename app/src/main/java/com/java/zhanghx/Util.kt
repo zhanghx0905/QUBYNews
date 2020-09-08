@@ -9,7 +9,7 @@ fun String.toArticle(): String =
 
 
 fun scale(old: Bitmap): Bitmap {
-    val resultWidth = SCREEN_Width / 3
+    val resultWidth = SCREEN_WIDTH * 2/ 3
     val scale = resultWidth.toFloat() / old.width
     return Bitmap.createScaledBitmap(old, resultWidth, (old.height * scale).toInt(), true)
 }

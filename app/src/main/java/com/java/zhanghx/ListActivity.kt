@@ -1,16 +1,28 @@
 package com.java.zhanghx
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_list.*
+import kotlin.properties.Delegates
+
+
+@SuppressLint("StaticFieldLeak")
+lateinit var GLOBAL_CONTEXT: Context
+var SCREEN_WIDTH by Delegates.notNull<Int>()
 
 
 class ListActivity : AppCompatActivity() {
@@ -25,9 +37,34 @@ class ListActivity : AppCompatActivity() {
 
     private lateinit var newsAdapter: NewsAdapter
 
+    companion object {
+        private const val REQUEST_EXTERNAL_STORAGE = 1
+        private val PERMISSIONS_STORAGE =
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
+
+        GLOBAL_CONTEXT = applicationContext
+        val outMetrics = DisplayMetrics()
+        this.windowManager.defaultDisplay.getMetrics(outMetrics)
+        SCREEN_WIDTH = outMetrics.widthPixels
+        initInfectedData()
+        initScholarsData()
+        initEventsData()
+        NewsData.loadFromFile()
+
+        // 获得权限
+        while (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE)
+        }
 
         setSupportActionBar(newsToolbar)
         supportActionBar?.let {

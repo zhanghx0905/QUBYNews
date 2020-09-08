@@ -1,5 +1,6 @@
 package com.java.zhanghx
 
+import android.content.AsyncQueryHandler
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
@@ -54,34 +55,40 @@ object NewsData {
 
 
     inline fun refresh(
-        crossinline errorHandler: (error: FuelError) -> Unit,
-        crossinline finishHandler: () -> Unit
+        crossinline errorHandler: () -> Unit,
+        crossinline finishHandler: () -> Unit,
+        crossinline errorTypeHandler: () -> Unit
     ) { // 下拉
         if (canRefresh) {
             val url = URL + "size=$GET_COUNT&page=1&type=${ALL_TYPE[curTypeId]}"
             url.httpGet().responseString() { // 异步执行
                     _, _, result ->
                 when (result) {
-                    is Result.Failure -> errorHandler(result.error)
-                    is Result.Success -> addNews(result.get())
+                    is Result.Failure -> errorHandler()
+                    is Result.Success -> {
+                        addNews(result.get())
+                        finishHandler()
+                    }
                 }
-                finishHandler()
+
             }
-        } else finishHandler()
+        } else errorTypeHandler()
     }
 
     inline fun loadMore(
-        crossinline errorHandler: (error: FuelError) -> Unit,
+        crossinline errorHandler: () -> Unit,
         crossinline finishHandler: () -> Unit
     ) {
         curPage += 1
         val url = URL + "size=$GET_COUNT&page=$curPage&type=${ALL_TYPE[curTypeId]}"
         url.httpGet().responseString() { _, _, result ->
             when (result) {
-                is Result.Failure -> errorHandler(result.error)
-                is Result.Success -> addNews(result.get(), true)
+                is Result.Failure -> errorHandler()
+                is Result.Success -> {
+                    addNews(result.get(), true)
+                    finishHandler()
+                }
             }
-            finishHandler()
         }
     }
 

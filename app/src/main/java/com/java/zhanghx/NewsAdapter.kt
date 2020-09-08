@@ -10,10 +10,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.RecyclerView
-import com.github.kittinunf.fuel.core.FuelError
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter
+
 
 class NewsAdapter(private val activity: ListActivity, val newsListView: UltimateRecyclerView) :
     UltimateViewAdapter<NewsAdapter.ViewHolder>() {
@@ -26,12 +26,16 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
         newsListView.setAdapter(this)
 
         newsListView.setDefaultOnRefreshListener {
-            NewsData.refresh({ makeErrorToast(it) }) {
+            NewsData.refresh({
+                makeErrorToast()
+                newsListView.setRefreshing(false)
+            }, {
                 newsListView.setRefreshing(false)
                 notifyDataSetChanged()
-                if (NewsData.canRefresh)
-                    makeSuccessToast()
-                else Toast.makeText(activity, "本类别下不支持加载更多", Toast.LENGTH_SHORT).show()
+                makeSuccessToast()
+            }) {
+                newsListView.setRefreshing(false)
+                Toast.makeText(activity, "本类别下不支持加载更多", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -40,26 +44,22 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
             val mSwipeRefreshLayout = newsListView.mSwipeRefreshLayout
             if (NewsData.canRefresh) {
                 mSwipeRefreshLayout.post { mSwipeRefreshLayout.isRefreshing = true }
-                NewsData.loadMore({ makeErrorToast(it) }) {
+                NewsData.loadMore({ makeErrorToast() }) {
                     //newsListView.setRefreshing(false)
                     notifyDataSetChanged()
                     makeSuccessToast()
                 }
             }
         }
-        NewsData.refresh({ makeErrorToast(it) }) { notifyDataSetChanged() }
+        NewsData.refresh({ makeErrorToast() }, { notifyDataSetChanged() }) { }
     }
 
     private fun makeSuccessToast() {
         Toast.makeText(activity, "加载成功！", Toast.LENGTH_SHORT).show()
     }
 
-    private fun makeErrorToast(error: FuelError) {
-        Toast.makeText(
-            activity,
-            "${activity.resources.getString(R.string.network_err)}: $error",
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun makeErrorToast() {
+        Toast.makeText(activity, "网络错误！", Toast.LENGTH_SHORT).show()
     }
 
     fun doSearch(keywords: String) {
@@ -100,7 +100,7 @@ class NewsAdapter(private val activity: ListActivity, val newsListView: Ultimate
         val publisher: TextView = itemView.findViewById(R.id.text_view_publisher)
 
         init {
-            val maxWidth = SCREEN_Width / 3 * 2
+            val maxWidth = SCREEN_WIDTH / 3 * 2
             title.width = maxWidth
             category.width = maxWidth
             publishTime.width = maxWidth
