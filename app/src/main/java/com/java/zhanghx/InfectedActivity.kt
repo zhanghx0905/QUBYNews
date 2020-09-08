@@ -155,7 +155,7 @@ class InfectedActivity : AppCompatActivity() {
         return p.cities[city] as InfectedData
     }
 
-    inner class XFormatter(private val begData: String) : ValueFormatter() {
+    class XFormatter(private val begData: String) : ValueFormatter() {
         private val inFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val outFormatter = DateTimeFormatter.ofPattern("MM-dd")
         override fun getFormattedValue(value: Float): String {
@@ -221,7 +221,7 @@ class InfectedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_infected)
 
         if (countries.isEmpty()) {
-            initInfectedData()
+            initGlobalNetRes()
         }
 
         supportActionBar?.let {

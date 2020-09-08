@@ -100,7 +100,7 @@ class ScholarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scholar)
 
-        if (scholars.isEmpty()) initScholarsData()
+        if (scholars.isEmpty()) initGlobalNetRes()
 
         dead = intent.getBooleanExtra("dead", false)
         supportActionBar?.title = if (dead) "追忆学者" else "知疫学者"

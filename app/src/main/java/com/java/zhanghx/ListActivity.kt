@@ -25,6 +25,12 @@ lateinit var GLOBAL_CONTEXT: Context
 var SCREEN_WIDTH by Delegates.notNull<Int>()
 
 
+fun initGlobalNetRes() {
+    initInfectedData()
+    initScholarsData()
+}
+
+
 class ListActivity : AppCompatActivity() {
     private var removedType = ArrayList<Pair<Int, CharSequence>>()
     private var existType = ArrayList<Pair<Int, CharSequence>>()
@@ -54,8 +60,7 @@ class ListActivity : AppCompatActivity() {
         val outMetrics = DisplayMetrics()
         this.windowManager.defaultDisplay.getMetrics(outMetrics)
         SCREEN_WIDTH = outMetrics.widthPixels
-        initInfectedData()
-        initScholarsData()
+        initGlobalNetRes()
         initEventsData()
         NewsData.loadFromFile()
 
