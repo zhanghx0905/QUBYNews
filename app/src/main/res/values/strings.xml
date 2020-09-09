@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">QUBYNews</string>
     <string name="loading">Loading...</string>
-    <string name="title_activity_list">新闻</string>
+    <string name="title_activity_list">QUBYNews</string>
 
     <string name="list_title">新闻</string>
     <string name="list_search">搜索</string>
