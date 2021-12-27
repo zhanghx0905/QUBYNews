@@ -4,7 +4,7 @@ Java Assignment, 2020 Summer. [Report](./report.pdf)
 
 聚合和展示新冠疫情新闻、数据的 Android App.
 
-[演示视频](https://cloud.tsinghua.edu.cn/d/c4626ddc0c4b438da55b/)
+[演示视频](./demo.mp4)
 
 ## 功能
 
